@@ -21,6 +21,12 @@ class ChopTest < Test::Unit::TestCase
     Chop
   end
 
+  def setup
+    header 'Accept', 'application/json'
+    request = {:url => @@url}.to_json
+    post '/', request, "CONTENT_TYPE" => "application/json"
+  end
+
   def test_get_root
     get '/'
     assert last_response.status == 404

@@ -1,6 +1,9 @@
 source 'https://rubygems.org'
 
 gem 'sinatra'
-#gem 'sinatra-respond_to'
 gem 'sinatra-contrib'
 gem 'redis'
+
+group :test do
+    gem 'fakeredis'
+end

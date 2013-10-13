@@ -2,6 +2,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     backports (3.3.4)
+    fakeredis (0.4.2)
+      redis (~> 3.0.0)
     multi_json (1.8.0)
     rack (1.5.2)
     rack-protection (1.5.0)
@@ -26,6 +28,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  fakeredis
   redis
   sinatra
   sinatra-contrib

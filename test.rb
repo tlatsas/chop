@@ -1,13 +1,14 @@
+ENV['RACK_ENV'] = 'test'
+
 require_relative 'chop'
 require 'test/unit'
 require 'rack/test'
-
 require 'erb'
 require 'ostruct'
 
 def render_erb(template_file, locals)
-    fp = File.read(template_file)
-    ERB.new(fp).result(OpenStruct.new(locals).instance_eval { binding })
+  fp = File.read(template_file)
+  ERB.new(fp).result(OpenStruct.new(locals).instance_eval { binding })
 end
 
 class ChopTest < Test::Unit::TestCase

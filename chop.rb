@@ -1,14 +1,17 @@
-require_relative 'app_config'
 require 'sinatra/base'
 require 'sinatra/respond_with'
-require 'redis'
 require 'digest/sha1'
 require 'json'
 require 'uri'
 
-# setup redis
-uri = URI.parse(REDIS_URI)
-RD = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+if ENV['RACK_ENV'] == 'test'
+  require 'fakeredis'
+else
+  require 'redis'
+end
+
+REDIS_URL = ENV["REDIS_URL"] || ENV["REDISTOGO_URL"] ||
+            "redis://127.0.0.1:6379"
 
 module Sinatra
   module ChopHelpers
@@ -24,10 +27,19 @@ class Chop < Sinatra::Base
   helpers Sinatra::ChopHelpers
   register Sinatra::RespondWith
 
+  configure :test do
+    $redis = Redis.new
+  end
+
+  configure :production, :development do
+    uri = URI.parse(REDIS_URL)
+    $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+  end
+
   set :views, "./views"
 
   get '/:hash' do
-    url = RD.get params[:hash]
+    url = $redis.get params[:hash]
     if url
       respond_to do |f|
         f.on('text/plain') { url }
@@ -50,13 +62,13 @@ class Chop < Sinatra::Base
       f.on('text/html') do
         url = params[:url]
         hash = shorten url
-        RD.setnx hash, url
+        $redis.setnx hash, url
         hash
       end
       f.json do
         url = JSON.parse(request.body.read)['url']
         hash = shorten url
-        RD.setnx hash, url
+        $redis.setnx hash, url
         {:hash => hash}.to_json
       end
     end

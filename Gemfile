@@ -6,4 +6,5 @@ gem 'redis'
 
 group :test do
     gem 'fakeredis'
+    gem 'rack-test'
 end

@@ -29,6 +29,7 @@ PLATFORMS
 
 DEPENDENCIES
   fakeredis
+  rack-test
   redis
   sinatra
   sinatra-contrib
